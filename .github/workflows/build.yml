@@ -18,6 +18,9 @@ jobs:
       - name: Check Xcode Version
         run: /usr/bin/xcodebuild -version
 
+      - name: Get IPA
+        run: wget https://files.catbox.moe/vqtqls.zip -P ${{github.workspace}}/ && unzip ${{github.workspace}}/vqtqls.zip -d ${{github.workspace}}/ && rm ${{github.workspace}}/vqtqls.zip
+
       - name: Run Govnython Scripts
         run: |
           git clone https://github.com/CallocGD/PyBroma.git --recursive
@@ -45,10 +48,13 @@ jobs:
       - name: Build
         run: cmake --build ${{github.workspace}}/build
 
+      - name: Make IPA
+        run: mv ${{github.workspace}}/auby2/bin/GeometryJump ${{github.workspace}}/Payload/GeometryJump.app/ && cd ${{github.workspace}} && zip -r GeometryJump.ipa Payload
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Auby
+          name: GD_MOD${{github.run_id}}
           path: |
             ${{github.workspace}}/build/libcatgirl.dylib
-            ${{github.workspace}}/auby2/bin/GeometryJump
+            ${{github.workspace}}/GeometryJump.ipa
